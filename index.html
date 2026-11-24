@@ -416,7 +416,7 @@
       box-shadow: 0 8px 18px rgba(16, 185, 129, 0.25);
     }
 
-    /* Demo Ad Overlay */
+    /* Loading / Ad Overlay */
     .ad-modal {
       position: fixed;
       inset: 0;
@@ -474,7 +474,7 @@
       <div class="brand-name">LatestVideo</div>
     </div>
 
-    <!-- PAGE 1: 3 STEPS (Ek-ek karke unlock honge) -->
+    <!-- PAGE 1: 3 STEPS -->
     <div class="page active" id="page1">
       <div class="main-card">
         <div class="header-box">
@@ -526,10 +526,10 @@
     </div>
   </div>
 
-  <!-- Demo Rewarded Ad Modal -->
+  <!-- Demo Overlay -->
   <div class="ad-modal" id="adModal">
     <div class="ad-box">
-      <h3>Rewarded Ad Chal Raha Hai</h3>
+      <h3>Playing...</h3>
       <p>Step aage badhane ke liye timer khatam hone ka wait karein...</p>
       <div class="timer-pill" id="adTimer">3s remaining</div>
     </div>
@@ -538,10 +538,10 @@
   <script>
     // ====== SETTINGS ======
     const PAGE1_STEPS = 3;
-    const PAGE1_ADS_PER_STEP = 3;
+    const PAGE1_TAPS_PER_STEP = 3;
 
     const PAGE2_STEPS = 2;
-    const PAGE2_ADS_PER_STEP = 3;
+    const PAGE2_TAPS_PER_STEP = 3;
 
     // Yahan apna video link daalein (MP4, YouTube, ya koi bhi external link)
     const FINAL_VIDEO_URL = "https://www.w3schools.com/html/mov_bbb.mp4";
@@ -573,17 +573,17 @@
 
     function renderSlider(pageNum) {
       const totalSteps = pageNum === 1 ? PAGE1_STEPS : PAGE2_STEPS;
-      const adsPerStep = pageNum === 1 ? PAGE1_ADS_PER_STEP : PAGE2_ADS_PER_STEP;
+      const tapsPerStep = pageNum === 1 ? PAGE1_TAPS_PER_STEP : PAGE2_TAPS_PER_STEP;
       const progressArr = pageNum === 1 ? p1Progress : p2Progress;
       const currentSlide = pageNum === 1 ? p1Slide : p2Slide;
       const pillsEl = pageNum === 1 ? p1Pills : p2Pills;
       const trackEl = pageNum === 1 ? p1Track : p2Track;
       const labelPrefix = pageNum === 1 ? "Step" : "Verify";
 
-      // Sirf current step tak ke pills dikhenge (aage ke steps hidden rahenge)
+      // Sirf current step tak ke pills dikhenge
       pillsEl.innerHTML = "";
       for (let i = 0; i <= currentSlide; i++) {
-        const isDone = progressArr[i] >= adsPerStep;
+        const isDone = progressArr[i] >= tapsPerStep;
         const isCurrent = i === currentSlide && !isDone;
         const pill = document.createElement("div");
         pill.className = "step-pill" + (isDone ? " done" : isCurrent ? " current" : "");
@@ -591,22 +591,20 @@
         pillsEl.appendChild(pill);
       }
 
-      // Slides render (bina "of 3" ya "of 2" ke)
+      // Slides render
       trackEl.innerHTML = "";
       for (let i = 0; i < totalSteps; i++) {
         const watched = progressArr[i];
-        const isDone = watched >= adsPerStep;
+        const isDone = watched >= tapsPerStep;
 
         let dotsHtml = "";
-        for (let d = 0; d < adsPerStep; d++) {
+        for (let d = 0; d < tapsPerStep; d++) {
           dotsHtml += `<div class="dot ${d < watched ? "done" : ""}"></div>`;
         }
 
         const btnLabel = isDone
           ? `${labelPrefix} ${i + 1} Completed ✓`
-          : (pageNum === 1
-              ? `Watch Rewarded Ad (${watched}/${adsPerStep})`
-              : `Verify with Ad (${watched}/${adsPerStep})`);
+          : `▶ Tap to Play (${watched}/${tapsPerStep})`;
 
         const slide = document.createElement("div");
         slide.className = "slide";
@@ -617,7 +615,7 @@
             <p class="slide-sub">
               ${isDone
                 ? "Yeh step complete ho gaya hai!"
-                : `Is step ko complete karne ke liye ${adsPerStep - watched} ad aur dekhein.`}
+                : "Aage badhne ke liye neeche Tap to Play button par click karein."}
             </p>
             <div class="dots">${dotsHtml}</div>
             <button class="action-btn" ${isDone || isBusy ? "disabled" : ""} onclick="triggerRewardedAd(${pageNum}, ${i})">
@@ -645,7 +643,7 @@
       //   return;
       // }
 
-      // Testing ke liye 3-second demo rewarded ad:
+      // Testing ke liye 3-second demo timer:
       let timeLeft = 3;
       adTimer.textContent = `${timeLeft}s remaining`;
       adModal.classList.add("open");
@@ -665,7 +663,7 @@
     function onRewardEarned() {
       if (activePage === 1) {
         p1Progress[p1Slide]++;
-        const doneCurrent = p1Progress[p1Slide] >= PAGE1_ADS_PER_STEP;
+        const doneCurrent = p1Progress[p1Slide] >= PAGE1_TAPS_PER_STEP;
 
         if (doneCurrent && p1Slide < PAGE1_STEPS - 1) {
           renderSlider(1);
@@ -684,7 +682,7 @@
         }
       } else if (activePage === 2) {
         p2Progress[p2Slide]++;
-        const doneCurrent = p2Progress[p2Slide] >= PAGE2_ADS_PER_STEP;
+        const doneCurrent = p2Progress[p2Slide] >= PAGE2_TAPS_PER_STEP;
 
         if (doneCurrent && p2Slide < PAGE2_STEPS - 1) {
           renderSlider(2);
