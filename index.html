@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LatestVideo — Human Verification</title>
+  <title>LatestVideo — Unlock Video</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,280 +13,400 @@
     }
 
     body {
-      background: #f5f5f7;
-      color: #1d1d1f;
       min-height: 100vh;
+      background: linear-gradient(150deg, #eef6ff 0%, #f7f4ff 50%, #edfbf6 100%);
+      color: #1e293b;
       display: flex;
       justify-content: center;
-      padding: 20px 14px 40px;
+      align-items: flex-start;
+      padding: 24px 16px 40px;
     }
 
     .container {
       width: 100%;
-      max-width: 440px;
+      max-width: 430px;
     }
 
+    /* Brand Header */
     .brand {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .brand-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, #007aff, #5856d6);
-      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 18px;
-      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
+      font-size: 17px;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
     }
 
     .brand-name {
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.4px;
+      color: #0f172a;
     }
 
-    .card {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-      margin-bottom: 16px;
+    /* Page Switching */
+    .page {
+      display: none;
+      animation: fadeSlideIn 0.4s ease forwards;
     }
 
-    .verify-header {
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Main Card */
+    .main-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.08);
+    }
+
+    .header-box {
       text-align: center;
       margin-bottom: 18px;
     }
 
     .badge {
       display: inline-block;
-      background: #e8f2ff;
-      color: #007aff;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
       margin-bottom: 10px;
     }
 
-    .verify-header h1 {
-      font-size: 20px;
-      font-weight: 700;
+    .badge-blue {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+
+    .badge-mint {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .header-box h1 {
+      font-size: 21px;
+      font-weight: 800;
+      color: #0f172a;
       margin-bottom: 6px;
     }
 
-    .verify-header p {
-      font-size: 14px;
-      color: #6e6e73;
-      line-height: 1.45;
+    .header-box p {
+      font-size: 13.5px;
+      color: #64748b;
+      line-height: 1.5;
     }
 
-    .progress-wrap {
-      margin-top: 14px;
-    }
-
-    .progress-info {
+    /* Step Indicator Pills */
+    .step-pills {
       display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 600;
-      color: #6e6e73;
-      margin-bottom: 6px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: #e5e5ea;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #007aff, #34c759);
-      border-radius: 999px;
-      transition: width 0.35s ease;
-    }
-
-    .steps-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .step-card {
-      background: #ffffff;
-      border: 1.5px solid #e5e5ea;
-      border-radius: 16px;
-      padding: 16px;
-      transition: all 0.25s ease;
-    }
-
-    .step-card.active {
-      border-color: #007aff;
-      box-shadow: 0 4px 16px rgba(0, 122, 255, 0.12);
-    }
-
-    .step-card.locked {
-      opacity: 0.55;
-      background: #fafafa;
-    }
-
-    .step-card.completed {
-      border-color: #34c759;
-      background: #f4fdf6;
-    }
-
-    .step-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .step-title {
-      font-size: 15px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
+      justify-content: center;
       gap: 8px;
+      margin-bottom: 18px;
     }
 
-    .step-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #e5e5ea;
-      color: #1d1d1f;
+    .step-pill {
+      flex: 1;
+      text-align: center;
+      padding: 8px 6px;
+      border-radius: 12px;
       font-size: 12px;
       font-weight: 700;
-      display: inline-flex;
+      background: #f1f5f9;
+      color: #94a3b8;
+      border: 1.5px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .step-pill.current {
+      background: #eff6ff;
+      color: #2563eb;
+      border-color: #93c5fd;
+    }
+
+    .step-pill.done {
+      background: #ecfdf5;
+      color: #059669;
+      border-color: #6ee7b7;
+    }
+
+    .page-verify .step-pill.current {
+      background: #f0fdfa;
+      color: #0d9488;
+      border-color: #5eead4;
+    }
+
+    /* Horizontal Slider */
+    .slider-viewport {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 18px;
+    }
+
+    .slider-track {
+      display: flex;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .slide {
+      min-width: 100%;
+      padding: 2px;
+    }
+
+    .slide-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 22px 18px;
+      text-align: center;
+    }
+
+    .page-verify .slide-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f4fdf9 100%);
+      border-color: #ccfbf1;
+    }
+
+    .step-circle {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 12px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+      color: #2563eb;
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .step-card.active .step-num {
-      background: #007aff;
-      color: #fff;
+    .page-verify .step-circle {
+      background: linear-gradient(135deg, #ccfbf1, #d1fae5);
+      color: #0d9488;
     }
 
-    .step-card.completed .step-num {
-      background: #34c759;
-      color: #fff;
+    .slide-card.completed .step-circle {
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: #ffffff;
     }
 
-    .step-status {
-      font-size: 12px;
-      font-weight: 600;
-      color: #6e6e73;
+    .slide-card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
     }
 
-    .step-card.completed .step-status {
-      color: #248a3d;
+    .slide-sub {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 16px;
     }
 
+    /* Current Step Progress Dots */
     .dots {
       display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
+      gap: 8px;
+      margin-bottom: 18px;
     }
 
     .dot {
       flex: 1;
-      height: 6px;
+      height: 7px;
       border-radius: 999px;
-      background: #e5e5ea;
+      background: #e2e8f0;
       transition: background 0.3s ease;
     }
 
     .dot.done {
-      background: #34c759;
+      background: linear-gradient(90deg, #3b82f6, #6366f1);
     }
 
-    .ad-btn {
+    .page-verify .dot.done {
+      background: linear-gradient(90deg, #0d9488, #10b981);
+    }
+
+    /* Buttons */
+    .action-btn {
       width: 100%;
-      padding: 12px 14px;
+      padding: 14px 16px;
       border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
-      transition: transform 0.1s ease, opacity 0.2s ease;
-      background: #007aff;
       color: #ffffff;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      box-shadow: 0 8px 18px rgba(59, 130, 246, 0.24);
+      transition: transform 0.12s ease, opacity 0.2s ease;
     }
 
-    .ad-btn:active:not(:disabled) {
+    .page-verify .action-btn {
+      background: linear-gradient(135deg, #0d9488, #10b981);
+      box-shadow: 0 8px 18px rgba(16, 185, 129, 0.24);
+    }
+
+    .action-btn:active:not(:disabled) {
       transform: scale(0.98);
     }
 
-    .ad-btn:disabled {
-      background: #d1d1d6;
-      color: #8e8e93;
+    .action-btn:disabled {
+      opacity: 0.6;
       cursor: not-allowed;
+      box-shadow: none;
     }
 
-    .step-card.completed .ad-btn {
-      background: #34c759;
-      color: #ffffff;
-      opacity: 0.9;
+    .slide-card.completed .action-btn {
+      background: #10b981;
+      box-shadow: none;
     }
 
-    .final-box {
+    /* Next Page Ready Box */
+    .next-page-box {
       display: none;
-      text-align: center;
-      background: #ffffff;
-      border: 2px solid #34c759;
-      border-radius: 20px;
-      padding: 22px 18px;
       margin-top: 16px;
-      box-shadow: 0 8px 24px rgba(52, 199, 89, 0.15);
+      padding: 18px;
+      border-radius: 18px;
+      background: #f0fdfa;
+      border: 1.5px solid #99f6e4;
+      text-align: center;
+      animation: fadeSlideIn 0.35s ease;
     }
 
-    .final-box.show {
+    .next-page-box.show {
       display: block;
     }
 
-    .final-box h2 {
-      font-size: 19px;
-      color: #248a3d;
+    .next-page-box h3 {
+      font-size: 17px;
+      color: #0f766e;
       margin-bottom: 6px;
     }
 
-    .final-box p {
-      font-size: 14px;
-      color: #6e6e73;
+    .next-page-box p {
+      font-size: 13px;
+      color: #475569;
       margin-bottom: 14px;
     }
 
-    .unlock-btn {
+    .next-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0d9488, #10b981);
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(13, 148, 136, 0.25);
+    }
+
+    /* Final Video Section */
+    .video-card {
+      text-align: center;
+    }
+
+    .check-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: #ffffff;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+    }
+
+    .video-card h2 {
+      font-size: 20px;
+      color: #065f46;
+      margin-bottom: 6px;
+    }
+
+    .video-card p {
+      font-size: 13.5px;
+      color: #64748b;
+      margin-bottom: 16px;
+    }
+
+    .video-wrapper {
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0f172a;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .video-wrapper.show {
+      display: block;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      max-height: 280px;
+      display: block;
+    }
+
+    .video-wrapper iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: none;
+      display: block;
+    }
+
+    .open-link-btn {
       display: inline-block;
       width: 100%;
       padding: 14px;
       border-radius: 14px;
-      background: #34c759;
-      color: #fff;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
       text-decoration: none;
       font-weight: 700;
       font-size: 15px;
+      box-shadow: 0 8px 18px rgba(16, 185, 129, 0.25);
     }
 
-    /* Demo Ad Overlay (Testing ke liye) */
+    /* Demo Ad Overlay */
     .ad-modal {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.78);
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -300,33 +420,34 @@
 
     .ad-box {
       width: 100%;
-      max-width: 340px;
-      background: #1c1c1e;
-      color: #ffffff;
-      border-radius: 18px;
+      max-width: 330px;
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 22px;
       padding: 24px 20px;
       text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     }
 
     .ad-box h3 {
       font-size: 17px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .ad-box p {
       font-size: 13px;
-      color: #aeaeb2;
-      margin-bottom: 18px;
+      color: #64748b;
+      margin-bottom: 16px;
     }
 
     .timer-pill {
       display: inline-block;
-      background: #2c2c2e;
-      padding: 8px 16px;
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 8px 18px;
       border-radius: 999px;
       font-size: 14px;
-      font-weight: 600;
-      color: #ffd60a;
+      font-weight: 700;
     }
   </style>
 </head>
@@ -337,30 +458,55 @@
       <div class="brand-name">LatestVideo</div>
     </div>
 
-    <div class="card">
-      <div class="verify-header">
-        <span class="badge">Human Verification</span>
-        <h1>4 Steps Complete Karein</h1>
-        <p>Latest video unlock karne ke liye neeche diye gaye 4 steps complete karein. Har step mein 3 rewarded ads dekhne honge.</p>
-      </div>
-
-      <div class="progress-wrap">
-        <div class="progress-info">
-          <span id="stepProgressText">0 / 4 Steps Completed</span>
-          <span id="adProgressText">0 / 12 Ads</span>
+    <!-- PAGE 1: 3 STEPS UNLOCK -->
+    <div class="page active" id="page1">
+      <div class="main-card">
+        <div class="header-box">
+          <span class="badge badge-blue">Unlock Video</span>
+          <h1>3 Steps Complete Karein</h1>
+          <p>Aage badhne ke liye neeche diye gaye 3 steps ek-ek karke complete karein.</p>
         </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
+
+        <div class="step-pills" id="p1Pills"></div>
+
+        <div class="slider-viewport">
+          <div class="slider-track" id="p1Track"></div>
+        </div>
+
+        <div class="next-page-box" id="goToPage2Box">
+          <h3>3 Steps Complete Ho Gaye!</h3>
+          <p>Ab final 2 steps verify karne ke liye next page par jayein.</p>
+          <button class="next-btn" onclick="openVerifyPage()">Continue to Verify Page →</button>
         </div>
       </div>
     </div>
 
-    <div class="steps-list" id="stepsContainer"></div>
+    <!-- PAGE 2: ALAG PAGE - 2 STEPS VERIFY -->
+    <div class="page page-verify" id="page2">
+      <div class="main-card">
+        <div class="header-box">
+          <span class="badge badge-mint">Final Verification</span>
+          <h1>2 Steps Verify Karein</h1>
+          <p>Apna video turant dekhne ke liye yeh aakhiri 2 verify steps complete karein.</p>
+        </div>
 
-    <div class="final-box" id="finalBox">
-      <h2>Verification Complete!</h2>
-      <p>Saare 4 steps successfully complete ho gaye hain. Ab aap video dekh sakte hain.</p>
-      <a href="#video" id="finalVideoBtn" class="unlock-btn">Watch Latest Video</a>
+        <div class="step-pills" id="p2Pills"></div>
+
+        <div class="slider-viewport">
+          <div class="slider-track" id="p2Track"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: VIDEO UNLOCKED -->
+    <div class="page" id="page3">
+      <div class="main-card video-card">
+        <div class="check-badge">✓</div>
+        <h2>Video Unlocked!</h2>
+        <p>Verification complete ho gayi hai. Ab aap apna latest video dekh sakte hain.</p>
+        <div class="video-wrapper" id="videoWrapper"></div>
+        <a href="#" id="finalVideoBtn" class="open-link-btn" target="_blank" rel="noopener">Open Video Link</a>
+      </div>
     </div>
   </div>
 
@@ -368,134 +514,218 @@
   <div class="ad-modal" id="adModal">
     <div class="ad-box">
       <h3>Rewarded Ad Chal Raha Hai</h3>
-      <p>Reward earn karne ke liye countdown khatam hone ka wait karein...</p>
+      <p>Step aage badhane ke liye timer khatam hone ka wait karein...</p>
       <div class="timer-pill" id="adTimer">3s remaining</div>
     </div>
   </div>
 
   <script>
-    const TOTAL_STEPS = 4;
-    const ADS_PER_STEP = 3;
-    const FINAL_VIDEO_URL = "https://example.com/latest-video"; // Yahan apna video link daal dena
+    // ====== SETTINGS ======
+    const PAGE1_STEPS = 3;
+    const PAGE1_ADS_PER_STEP = 3;
 
-    let currentStep = 0; // 0 se 3 tak
-    let stepProgress = [0, 0, 0, 0];
-    let isAdPlaying = false;
+    const PAGE2_STEPS = 2;
+    const PAGE2_ADS_PER_STEP = 3; // Chaho toh isko 1, 2 ya 3 kar sakte ho
 
-    const stepsContainer = document.getElementById("stepsContainer");
-    const stepProgressText = document.getElementById("stepProgressText");
-    const adProgressText = document.getElementById("adProgressText");
-    const progressFill = document.getElementById("progressFill");
-    const finalBox = document.getElementById("finalBox");
+    // Yahan apna video link daalein (MP4, YouTube, ya koi bhi external link)
+    const FINAL_VIDEO_URL = "https://www.w3schools.com/html/mov_bbb.mp4";
+    // ======================
+
+    let activePage = 1;
+    let p1Slide = 0;
+    let p1Progress = Array(PAGE1_STEPS).fill(0);
+
+    let p2Slide = 0;
+    let p2Progress = Array(PAGE2_STEPS).fill(0);
+
+    let isBusy = false;
+    let isVideoLoaded = false;
+
+    const p1Pills = document.getElementById("p1Pills");
+    const p1Track = document.getElementById("p1Track");
+    const goToPage2Box = document.getElementById("goToPage2Box");
+
+    const p2Pills = document.getElementById("p2Pills");
+    const p2Track = document.getElementById("p2Track");
+
+    const videoWrapper = document.getElementById("videoWrapper");
     const finalVideoBtn = document.getElementById("finalVideoBtn");
     const adModal = document.getElementById("adModal");
     const adTimer = document.getElementById("adTimer");
 
     finalVideoBtn.href = FINAL_VIDEO_URL;
 
-    function renderSteps() {
-      stepsContainer.innerHTML = "";
+    function renderSlider(pageNum) {
+      const totalSteps = pageNum === 1 ? PAGE1_STEPS : PAGE2_STEPS;
+      const adsPerStep = pageNum === 1 ? PAGE1_ADS_PER_STEP : PAGE2_ADS_PER_STEP;
+      const progressArr = pageNum === 1 ? p1Progress : p2Progress;
+      const currentSlide = pageNum === 1 ? p1Slide : p2Slide;
+      const pillsEl = pageNum === 1 ? p1Pills : p2Pills;
+      const trackEl = pageNum === 1 ? p1Track : p2Track;
+      const labelPrefix = pageNum === 1 ? "Step" : "Verify";
 
-      let completedSteps = 0;
-      let totalAdsWatched = 0;
+      // Pills render
+      pillsEl.innerHTML = "";
+      for (let i = 0; i < totalSteps; i++) {
+        const isDone = progressArr[i] >= adsPerStep;
+        const isCurrent = i === currentSlide && !isDone;
+        const pill = document.createElement("div");
+        pill.className = "step-pill" + (isDone ? " done" : isCurrent ? " current" : "");
+        pill.textContent = isDone ? `${labelPrefix} ${i + 1} ✓` : `${labelPrefix} ${i + 1}`;
+        pillsEl.appendChild(pill);
+      }
 
-      for (let i = 0; i < TOTAL_STEPS; i++) {
-        const watched = stepProgress[i];
-        totalAdsWatched += watched;
-
-        const isCompleted = watched >= ADS_PER_STEP;
-        const isActive = i === currentStep && !isCompleted;
-        const isLocked = i > currentStep;
-
-        if (isCompleted) completedSteps++;
-
-        const card = document.createElement("div");
-        card.className = "step-card";
-        if (isCompleted) card.classList.add("completed");
-        else if (isActive) card.classList.add("active");
-        else if (isLocked) card.classList.add("locked");
+      // Slides render
+      trackEl.innerHTML = "";
+      for (let i = 0; i < totalSteps; i++) {
+        const watched = progressArr[i];
+        const isDone = watched >= adsPerStep;
 
         let dotsHtml = "";
-        for (let d = 0; d < ADS_PER_STEP; d++) {
+        for (let d = 0; d < adsPerStep; d++) {
           dotsHtml += `<div class="dot ${d < watched ? "done" : ""}"></div>`;
         }
 
-        let statusText = "Locked";
-        if (isCompleted) statusText = "Completed ✓";
-        else if (isActive) statusText = `${watched}/${ADS_PER_STEP} Ads`;
+        const btnLabel = isDone
+          ? `${labelPrefix} ${i + 1} Completed ✓`
+          : (pageNum === 1
+              ? `Watch Rewarded Ad (${watched}/${adsPerStep})`
+              : `Verify with Ad (${watched}/${adsPerStep})`);
 
-        let btnText = "Step Locked";
-        if (isCompleted) btnText = "Step Completed ✓";
-        else if (isActive) btnText = `Watch Rewarded Ad (${watched}/${ADS_PER_STEP})`;
-
-        card.innerHTML = `
-          <div class="step-top">
-            <div class="step-title">
-              <span class="step-num">${isCompleted ? "✓" : i + 1}</span>
-              Step ${i + 1}
-            </div>
-            <div class="step-status">${statusText}</div>
+        const slide = document.createElement("div");
+        slide.className = "slide";
+        slide.innerHTML = `
+          <div class="slide-card ${isDone ? "completed" : ""}">
+            <div class="step-circle">${isDone ? "✓" : i + 1}</div>
+            <h2>${labelPrefix} ${i + 1} of ${totalSteps}</h2>
+            <p class="slide-sub">
+              ${isDone
+                ? "Yeh step complete ho gaya hai!"
+                : `Is step ko complete karne ke liye ${adsPerStep - watched} ad aur dekhein.`}
+            </p>
+            <div class="dots">${dotsHtml}</div>
+            <button class="action-btn" ${isDone || isBusy ? "disabled" : ""} onclick="triggerRewardedAd(${pageNum}, ${i})">
+              ${btnLabel}
+            </button>
           </div>
-          <div class="dots">${dotsHtml}</div>
-          <button class="ad-btn" ${!isActive || isAdPlaying ? "disabled" : ""} onclick="triggerRewardedAd(${i})">
-            ${btnText}
-          </button>
         `;
-
-        stepsContainer.appendChild(card);
+        trackEl.appendChild(slide);
       }
 
-      stepProgressText.textContent = `${completedSteps} / ${TOTAL_STEPS} Steps Completed`;
-      adProgressText.textContent = `${totalAdsWatched} / ${TOTAL_STEPS * ADS_PER_STEP} Ads`;
-      progressFill.style.width = `${(totalAdsWatched / (TOTAL_STEPS * ADS_PER_STEP)) * 100}%`;
-
-      if (completedSteps === TOTAL_STEPS) {
-        finalBox.classList.add("show");
-      }
+      trackEl.style.transform = `translateX(-${currentSlide * 100}%)`;
     }
 
-    // Yahan apna real Rewarded Ad SDK ya Android WebView bridge connect karein
-    function triggerRewardedAd(stepIndex) {
-      if (isAdPlaying || stepIndex !== currentStep) return;
-      isAdPlaying = true;
-      renderSteps();
+    function triggerRewardedAd(pageNum, stepIndex) {
+      if (isBusy) return;
+      const currentSlide = pageNum === 1 ? p1Slide : p2Slide;
+      if (stepIndex !== currentSlide) return;
 
-      // Agar Android WebView bridge use kar rahe ho:
+      isBusy = true;
+      renderSlider(pageNum);
+
+      // Android WebView bridge ke liye:
       // if (window.Android && typeof window.Android.showRewardedAd === "function") {
       //   window.Android.showRewardedAd();
       //   return;
       // }
 
-      // Browser testing ke liye 3-second demo rewarded ad:
+      // Testing ke liye 3-second demo rewarded ad:
       let timeLeft = 3;
       adTimer.textContent = `${timeLeft}s remaining`;
       adModal.classList.add("open");
 
-      const interval = setInterval(() => {
+      const timer = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) {
           adTimer.textContent = `${timeLeft}s remaining`;
         } else {
-          clearInterval(interval);
+          clearInterval(timer);
           adModal.classList.remove("open");
           onRewardEarned();
         }
       }, 1000);
     }
 
-    // Ad complete hone ke baad is function ko call karein (WebView se bhi call ho sakta hai)
+    // Real ad SDK / WebView complete hone par bhi yahi function call karna hai
     function onRewardEarned() {
-      isAdPlaying = false;
-      if (currentStep < TOTAL_STEPS) {
-        stepProgress[currentStep]++;
-        if (stepProgress[currentStep] >= ADS_PER_STEP) {
-          currentStep++;
+      if (activePage === 1) {
+        p1Progress[p1Slide]++;
+        const doneCurrent = p1Progress[p1Slide] >= PAGE1_ADS_PER_STEP;
+
+        if (doneCurrent && p1Slide < PAGE1_STEPS - 1) {
+          renderSlider(1);
+          setTimeout(() => {
+            p1Slide++;
+            isBusy = false;
+            renderSlider(1);
+          }, 550);
+        } else if (doneCurrent && p1Slide === PAGE1_STEPS - 1) {
+          isBusy = false;
+          renderSlider(1);
+          goToPage2Box.classList.add("show");
+        } else {
+          isBusy = false;
+          renderSlider(1);
+        }
+      } else if (activePage === 2) {
+        p2Progress[p2Slide]++;
+        const doneCurrent = p2Progress[p2Slide] >= PAGE2_ADS_PER_STEP;
+
+        if (doneCurrent && p2Slide < PAGE2_STEPS - 1) {
+          renderSlider(2);
+          setTimeout(() => {
+            p2Slide++;
+            isBusy = false;
+            renderSlider(2);
+          }, 550);
+        } else if (doneCurrent && p2Slide === PAGE2_STEPS - 1) {
+          renderSlider(2);
+          setTimeout(() => {
+            isBusy = false;
+            openVideoPage();
+          }, 600);
+        } else {
+          isBusy = false;
+          renderSlider(2);
         }
       }
-      renderSteps();
     }
 
-    renderSteps();
+    function openVerifyPage() {
+      activePage = 2;
+      document.getElementById("page1").classList.remove("active");
+      document.getElementById("page2").classList.add("active");
+      window.location.hash = "verify";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      renderSlider(2);
+    }
+
+    function openVideoPage() {
+      activePage = 3;
+      document.getElementById("page2").classList.remove("active");
+      document.getElementById("page3").classList.add("active");
+      window.location.hash = "video";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      loadUnlockedVideo(FINAL_VIDEO_URL);
+    }
+
+    function loadUnlockedVideo(url) {
+      if (isVideoLoaded || !url) return;
+      isVideoLoaded = true;
+
+      const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      const isDirectVideo = /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
+
+      if (ytMatch && ytMatch[1]) {
+        videoWrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        videoWrapper.classList.add("show");
+      } else if (isDirectVideo) {
+        videoWrapper.innerHTML = `<video controls playsinline src="${url}"></video>`;
+        videoWrapper.classList.add("show");
+      }
+    }
+
+    renderSlider(1);
   </script>
 </body>
 </html>
