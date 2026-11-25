@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LatestVideo — Unlock Video</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -27,7 +28,6 @@
       max-width: 430px;
     }
 
-    /* Brand Header */
     .brand {
       display: flex;
       align-items: center;
@@ -56,7 +56,6 @@
       color: #f8fafc;
     }
 
-    /* Page Switching */
     .page {
       display: none;
       animation: fadeSlideIn 0.4s ease forwards;
@@ -88,7 +87,6 @@
       }
     }
 
-    /* Main Grey Card */
     .main-card {
       background: #353b47;
       border: 1px solid #485060;
@@ -137,7 +135,6 @@
       line-height: 1.5;
     }
 
-    /* Step Indicator Pills (Sirf unlocked steps dikhenge) */
     .step-pills {
       display: flex;
       justify-content: center;
@@ -176,7 +173,6 @@
       border-color: #2dd4bf;
     }
 
-    /* Horizontal Slider */
     .slider-viewport {
       width: 100%;
       overflow: hidden;
@@ -247,7 +243,6 @@
       margin-bottom: 18px;
     }
 
-    /* Progress Dots */
     .dots {
       display: flex;
       gap: 8px;
@@ -270,7 +265,6 @@
       background: linear-gradient(90deg, #2dd4bf, #34d399);
     }
 
-    /* Buttons */
     .action-btn {
       width: 100%;
       padding: 14px 16px;
@@ -305,7 +299,6 @@
       box-shadow: none;
     }
 
-    /* Next Page Ready Box */
     .next-page-box {
       display: none;
       margin-top: 16px;
@@ -346,7 +339,6 @@
       box-shadow: 0 8px 18px rgba(13, 148, 136, 0.25);
     }
 
-    /* Final Video Section */
     .video-card {
       text-align: center;
     }
@@ -416,8 +408,7 @@
       box-shadow: 0 8px 18px rgba(16, 185, 129, 0.25);
     }
 
-    /* Loading / Ad Overlay */
-    .ad-modal {
+    .play-modal {
       position: fixed;
       inset: 0;
       background: rgba(15, 18, 24, 0.78);
@@ -429,11 +420,11 @@
       z-index: 999;
     }
 
-    .ad-modal.open {
+    .play-modal.open {
       display: flex;
     }
 
-    .ad-box {
+    .play-box {
       width: 100%;
       max-width: 330px;
       background: #353b47;
@@ -445,12 +436,12 @@
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
     }
 
-    .ad-box h3 {
+    .play-box h3 {
       font-size: 17px;
       margin-bottom: 6px;
     }
 
-    .ad-box p {
+    .play-box p {
       font-size: 13px;
       color: #b8c1d1;
       margin-bottom: 16px;
@@ -497,7 +488,7 @@
       </div>
     </div>
 
-    <!-- PAGE 2: ALAG PAGE - 2 STEPS VERIFY -->
+    <!-- PAGE 2: 2 STEPS VERIFY -->
     <div class="page page-verify" id="page2">
       <div class="main-card">
         <div class="header-box">
@@ -527,15 +518,22 @@
   </div>
 
   <!-- Demo Overlay -->
-  <div class="ad-modal" id="adModal">
-    <div class="ad-box">
+  <div class="play-modal" id="playModal">
+    <div class="play-box">
       <h3>Playing...</h3>
       <p>Step aage badhane ke liye timer khatam hone ka wait karein...</p>
-      <div class="timer-pill" id="adTimer">3s remaining</div>
+      <div class="timer-pill" id="playTimer">3s remaining</div>
     </div>
   </div>
 
   <script>
+    // ====== TELEGRAM MINI APP INIT ======
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
     // ====== SETTINGS ======
     const PAGE1_STEPS = 3;
     const PAGE1_TAPS_PER_STEP = 3;
@@ -566,8 +564,8 @@
 
     const videoWrapper = document.getElementById("videoWrapper");
     const finalVideoBtn = document.getElementById("finalVideoBtn");
-    const adModal = document.getElementById("adModal");
-    const adTimer = document.getElementById("adTimer");
+    const playModal = document.getElementById("playModal");
+    const playTimer = document.getElementById("playTimer");
 
     finalVideoBtn.href = FINAL_VIDEO_URL;
 
@@ -580,7 +578,6 @@
       const trackEl = pageNum === 1 ? p1Track : p2Track;
       const labelPrefix = pageNum === 1 ? "Step" : "Verify";
 
-      // Sirf current step tak ke pills dikhenge
       pillsEl.innerHTML = "";
       for (let i = 0; i <= currentSlide; i++) {
         const isDone = progressArr[i] >= tapsPerStep;
@@ -591,7 +588,6 @@
         pillsEl.appendChild(pill);
       }
 
-      // Slides render
       trackEl.innerHTML = "";
       for (let i = 0; i < totalSteps; i++) {
         const watched = progressArr[i];
@@ -618,7 +614,7 @@
                 : "Aage badhne ke liye neeche Tap to Play button par click karein."}
             </p>
             <div class="dots">${dotsHtml}</div>
-            <button class="action-btn" ${isDone || isBusy ? "disabled" : ""} onclick="triggerRewardedAd(${pageNum}, ${i})">
+            <button class="action-btn" ${isDone || isBusy ? "disabled" : ""} onclick="handleTapPlay(${pageNum}, ${i})">
               ${btnLabel}
             </button>
           </div>
@@ -629,7 +625,7 @@
       trackEl.style.transform = `translateX(-${currentSlide * 100}%)`;
     }
 
-    function triggerRewardedAd(pageNum, stepIndex) {
+    function handleTapPlay(pageNum, stepIndex) {
       if (isBusy) return;
       const currentSlide = pageNum === 1 ? p1Slide : p2Slide;
       if (stepIndex !== currentSlide) return;
@@ -643,18 +639,17 @@
       //   return;
       // }
 
-      // Testing ke liye 3-second demo timer:
       let timeLeft = 3;
-      adTimer.textContent = `${timeLeft}s remaining`;
-      adModal.classList.add("open");
+      playTimer.textContent = `${timeLeft}s remaining`;
+      playModal.classList.add("open");
 
       const timer = setInterval(() => {
         timeLeft--;
         if (timeLeft > 0) {
-          adTimer.textContent = `${timeLeft}s remaining`;
+          playTimer.textContent = `${timeLeft}s remaining`;
         } else {
           clearInterval(timer);
-          adModal.classList.remove("open");
+          playModal.classList.remove("open");
           onRewardEarned();
         }
       }, 1000);
