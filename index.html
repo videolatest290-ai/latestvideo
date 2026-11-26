@@ -443,7 +443,7 @@
       <div class="brand-name">LatestVideo</div>
     </div>
 
-    <!-- PAGE 1: 3 STEPS (Rewarded Interstitial) -->
+    <!-- PAGE 1: 3 STEPS x 1 TAP (Rewarded Popup) -->
     <div class="page active" id="page1">
       <div class="main-card">
         <div class="header-box">
@@ -466,7 +466,7 @@
       </div>
     </div>
 
-    <!-- PAGE 2: 2 STEPS VERIFY (Rewarded Popup) -->
+    <!-- PAGE 2: 2 STEPS x 3 TAPS (Rewarded Popup) -->
     <div class="page page-verify" id="page2">
       <div class="main-card">
         <div class="header-box">
@@ -508,10 +508,10 @@
 
     // ====== SETTINGS ======
     const PAGE1_STEPS = 3;
-    const PAGE1_TAPS_PER_STEP = 3;
+    const PAGE1_TAPS_PER_STEP = 1; // Page 1: har step mein 1 Rewarded Popup
 
     const PAGE2_STEPS = 2;
-    const PAGE2_TAPS_PER_STEP = 3;
+    const PAGE2_TAPS_PER_STEP = 3; // Page 2: har step mein poore 3 Rewarded Popup
 
     // Yahan apna asli video link daalein (MP4, YouTube, ya koi bhi external link)
     const FINAL_VIDEO_URL = "https://jumpshare.com/share/zxhBoRhBxdKKcvcBcF4A";
@@ -622,13 +622,8 @@
       isBusy = true;
       renderSlider(pageNum);
 
-      // Page 1: Rewarded Interstitial | Page 2: Rewarded Popup
-      const adPromise =
-        pageNum === 1
-          ? window.show_12350296()
-          : window.show_12350296("pop");
-
-      adPromise
+      // Page 1 aur Page 2 dono par sirf Rewarded Popup
+      window.show_12350296("pop")
         .then(() => {
           onRewardEarned();
         })
